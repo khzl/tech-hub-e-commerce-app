@@ -11,6 +11,7 @@ import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import ProductDetails from './components/ProductDetails';
 
 const AppContent = () => {
   const { darkMode } = useTheme();
@@ -19,25 +20,41 @@ const AppContent = () => {
     palette: {
       mode: darkMode ? 'dark' : 'light',
       primary: {
-        main: '#CCDC28',
-        contrastText: '#000000',
+        main: '#1565C0',
+        contrastText: '#ffffff',
       },
       secondary: {
         main: darkMode ? '#CCDC28' : '#1976d2',
+        contrastText: "#ffffff",
       },
       background: {
-        default: darkMode ? '#121212' : '#ffffff',
+        default: darkMode ? '#121212' : '#F5F7FA',
         paper: darkMode ? '#1e1e1e' : '#ffffff',
+      },
+      text:{
+        primary: darkMode ? "#EDEDED" : "#212121",
+        secondary: darkMode ? "#B0BECS" : "#546E7A",
+      },
+    },
+    typography: {
+      fontFamily: "'Cairo' , 'Roboto' , sans-serif",
+      h4:{
+        fontWeight: 700,
+        color: darkMode ? "#E3F2FD" : "#1565C0",
+      },
+      button:{
+        fontWeight: 600,
+        textTransform: "none",
       },
     },
     components: {
       MuiButton: {
         styleOverrides: {
           contained: {
-            backgroundColor: '#CCDC28',
-            color: '#000000',
+            backgroundColor: '#1565C0',
+            color: '#ffffff',
             '&:hover': {
-              backgroundColor: '#b8c424',
+              backgroundColor: '#0D47A1',
             },
           },
         },
@@ -45,8 +62,16 @@ const AppContent = () => {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: darkMode ? '#1e1e1e' : '#CCDC28',
+            backgroundColor: darkMode ? '#1e1e1e' : '#1565C0',
             color: darkMode ? '#ffffff' : '#000000',
+          },
+        },
+      },
+      MuiCard:{
+        styleOverrides:{
+          root: {
+            borderRadius: 12,
+            boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
           },
         },
       },
@@ -62,6 +87,7 @@ const AppContent = () => {
           <ProtectedRoute>
             <Routes>
               <Route path="/products" element={<Products />} />
+              <Route path="/product/:id" element={<ProductDetails/>}/>
               <Route path="/users" element={<Users />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
