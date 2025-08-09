@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import {
   ThemeProvider as MUIThemeProvider,
-  createTheme,
+  createTheme
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './context/AuthContext';
@@ -17,11 +17,8 @@ import AdminProducts from './components/AdminProducts';
 import AdminCategories from './components/AdminCategories';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
-<<<<<<< HEAD
-=======
-import AdminRoute from './components/AdminRoute';
 import ErrorBoundary from './components/ErrorBoundary';
->>>>>>> upstream/main
+import AdminRoute from './components/AdminRoute';
 
 const AppContent = () => {
   const { darkMode } = useTheme();
@@ -91,107 +88,88 @@ const AppContent = () => {
   return (
     <MUIThemeProvider theme={theme}>
       <CssBaseline />
+      <ErrorBoundary fallbackMessage="We're trouble loading the application. please refresh the page.">
       <AuthProvider>
         <BrowserRouter>
           <Navigation />
-          <ProtectedRoute>
-            <Routes>
-<<<<<<< HEAD
-              <Route path="/products" element={<Products />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/" element={<Navigate to="/products" replace />} />
-              <Route path="/login" element={<Navigate to="/products" replace />} />
-=======
-              <Route
-                path='/login'
-                element={
-                  <PublicRoute>
-                    <ErrorBoundary fallbackMessage='There was an issue loading the login page.'>
-                      <Login />
-                    </ErrorBoundary>
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path='/products'
-                element={
-                  <ErrorBoundary fallbackMessage='Unable to load products. Please try again.'>
-                    <Products />
-                  </ErrorBoundary>
-                }
-              />
-              <Route
-                path='/products/:id'
-                element={
-                  <ErrorBoundary fallbackMessage='Unable to load product details. Please try again.'>
-                    <ProductDetails />
-                  </ErrorBoundary>
-                }
-              />
-              <Route
-                path='/cart'
-                element={
-                  <ErrorBoundary fallbackMessage='Unable to load cart. Please try again.'>
-                    <Cart />
-                  </ErrorBoundary>
-                }
-              />
-              <Route
-                path='/checkout'
-                element={
-                  <ErrorBoundary fallbackMessage='Unable to load checkout. Please try again.'>
-                    <Checkout />
-                  </ErrorBoundary>
-                }
-              />
-              <Route
-                path='/admin/users'
-                element={
-                  <AdminRoute>
-                    <ErrorBoundary fallbackMessage='Unable to load users. Please try again.'>
-                      <Users />
-                    </ErrorBoundary>
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path='/admin/products'
-                element={
-                  <AdminRoute>
-                    <ErrorBoundary fallbackMessage='Unable to load admin products. Please try again.'>
-                      <AdminProducts />
-                    </ErrorBoundary>
-                  </AdminRoute>
-                }
-              />
-              <Route
-                path='/admin/categories'
-                element={
-                  <AdminRoute>
-                    <ErrorBoundary fallbackMessage='Unable to load admin categories. Please try again.'>
-                      <AdminCategories />
-                    </ErrorBoundary>
-                  </AdminRoute>
-                }
-              />
-              <Route path='/' element={<Navigate to='/products' replace />} />
->>>>>>> upstream/main
-            </Routes>
-          </ProtectedRoute>
           <Routes>
-            <Route 
-              path="/login" 
+            <Route
+              path="/login"
               element={
                 <PublicRoute>
-                  <Login />
+                  <ErrorBoundary fallbackMessage="There was an issue loading the login page.">
+                    <Login />
+                  </ErrorBoundary>
                 </PublicRoute>
-              } 
+              }
             />
+            <Route
+              path="/products"
+              element={
+                  <ErrorBoundary fallbackMessage="Unable to load products. Please try again.">
+                    <Products />
+                  </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/products/:id"
+              element={
+                  <ErrorBoundary fallbackMessage="Unable to load product details. Please try again.">
+                    <ProductDetails />
+                  </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                  <ErrorBoundary fallbackMessage="Unable to load cart. Please try again.">
+                    <Cart />
+                  </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                  <ErrorBoundary fallbackMessage="Unable to load checkout. Please try again.">
+                    <Checkout />
+                  </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <AdminRoute>
+                  <ErrorBoundary fallbackMessage="Unable to load users. Please try again.">
+                    <Users />
+                  </ErrorBoundary>
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/products"
+              element={
+                <AdminRoute>
+                  <ErrorBoundary fallbackMessage="Unable to load admin products. Please try again.">
+                    <AdminProducts />
+                  </ErrorBoundary>
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/categories"
+              element={
+                <AdminRoute>
+                  <ErrorBoundary fallbackMessage="Unable to load admin categories. Please try again.">
+                    <AdminCategories />
+                  </ErrorBoundary>
+                </AdminRoute>
+              }
+            />
+            <Route path="/" element={<Navigate to="/products" replace />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
+      </ErrorBoundary>
     </MUIThemeProvider>
   );
 };

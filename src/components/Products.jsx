@@ -12,9 +12,11 @@ import {
   Box,
   Chip,
   Pagination,
-  Stack
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup
 } from '@mui/material';
-import { ShoppingCart, Visibility } from '@mui/icons-material';
+import { ShoppingCart, Visibility , ViewModule , ViewList } from '@mui/icons-material';
 import { productsAPI } from '../api/productsAPI';
 import { cartAPI } from '../api/cartAPI';
 import { ProductsGridSkeleton } from './SkeletonLoader';
@@ -27,7 +29,7 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(6);
-  const [viewMode , setviewMode] = useState("grid");
+  const [viewMode, SetViewMode] = useState('grid');
 
   useEffect(() => {
     fetchProducts();
@@ -138,6 +140,14 @@ const Products = () => {
     (filteredProducts?.length || 0) / productsPerPage
   );
 
+
+  const handleViewChange = (event, newView) => {
+    if (newView !== null){
+      SetViewMode(newView);
+    }
+  };
+
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
@@ -161,20 +171,22 @@ const Products = () => {
           sx={{ mb: 3 }}
         />
 
-        <ToggleButtonGroup
-        value={viewMode}
-        exclusive
-        onChange={(e,newView) => setviewMode(newView)}
-        sx={{ mb: 3}}>
-          <ToggleButton value={"grid"}>
-            <ViewModule/> Grid
-          </ToggleButton>
-          <ToggleButton value={"list"}>
-            <ViewList/> List
-          </ToggleButton>
-        </ToggleButtonGroup>
+        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end'}}>
+          <ToggleButtonGroup
+          value={viewMode}
+          exclusive
+          onChange={handleViewChange}
+          size='small'>
+            <ToggleButton value={"grid"} aria-label='Grid View'>
+              <ViewModule/>
+            </ToggleButton>
+             <ToggleButton value={"list"} aria-label='List View'>
+              <ViewList/>
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
 
-        {viewMode === "grid" ? (
+        {viewMode === 'grid' && (
         <Grid container spacing={3}>
           {currentProducts && currentProducts.length > 0 ? (
             currentProducts.map((product) => {
@@ -182,7 +194,7 @@ const Products = () => {
               if (!product || !product.id) {
                 return null;
               }
-              
+
               return (
                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
                   <Card
@@ -290,50 +302,126 @@ const Products = () => {
             </Grid>
           )}
         </Grid>
-        ) : (
-          <Stack spacing={2}>
-            {currentProducts.map((product) => (
-              <Card key={product.id} sx={{display: "flex", p: 2}}>
-                <Link
-                to={`/product/${product.id}`}
-                style={{display: "flex" , textDecoration: "none" , color: "inherit" , width: "100%"}}
-                >
-                <CardMedia
-                component={"img"}
-                sx={{width: 150, borderRadius: 2, mr: 2}}
-                image={product.image}
-                alt={product.title}
-                />
-                <Box sx={{flex : 1}}>
-                  <Typography variant="h6">
-                    {product.title.length > 50
-                    ? `${product.title.substring(0,50)}...` : product.title}
-                  </Typography>
-
-                  <Chip label={product.category} size="small" sx={{ mb: 1}}/>
-
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1}}>
-                    {product.description.length > 80 ? 
-                    `${product.description.substring(0,80)}...` : product.description}
-                  </Typography>
-
-                  <Typography variant="h6" color="primary" sx={{ mb: 1}}>
-                    ${product.price}
-                  </Typography>
-                  </Box>
-                  </Link>
-                  <Box sx={{ display: "flex" , alignItems: "center"}}>
-                  <Button
-                  variant="contained"
-                  startIcon={<ShoppingCart/>}
-                  onClick={() => addToCart(product)}>
-                    Add To Cart 
-                  </Button>
-                </Box>
-              </Card>
-            ))}
-          </Stack>
         )}
+
+        {/* List View */}
+        {viewMode === 'list' && (
+        <Stack spacing={3}>
+          {currentProducts && currentProducts.length > 0 ? (
+            currentProducts.map((product) => {
+              // Safety check for product object
+              if (!product || !product.id) {
+                return null;
+              }
+
+             return (
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
+                  <Card
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    {product.primaryImage || product.image ? (
+                      <CardMedia
+                        component='img'
+                        height='200'
+                        image={product.primaryImage || product.image}
+                        alt={product.name || product.title}
+                        sx={{ objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          height: '200px',
+                          backgroundColor: 'grey.200',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'grey.600',
+                          fontSize: '14px',
+                        }}
+                      >
+                        No Image Available
+                      </Box>
+                    )}
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography variant='h6' gutterBottom>
+                        {(() => {
+                          const title =
+                            product.name || product.title || 'Unnamed Product';
+                          return title.length > 50
+                            ? `${title.substring(0, 50)}...`
+                            : title;
+                        })()}
+                      </Typography>
+
+                      <Chip
+                        label={
+                          product.categoryName ||
+                          (product.category &&
+                          typeof product.category === 'object'
+                            ? product.category.name
+                            : product.category) ||
+                          'No Category'
+                        }
+                        size='small'
+                        sx={{ mb: 1 }}
+                      />
+
+                      <Typography
+                        variant='body2'
+                        color='text.secondary'
+                        sx={{ mb: 2 }}
+                      >
+                        {(() => {
+                          const description =
+                            product.description || 'No description available';
+                          return description.length > 100
+                            ? `${description.substring(0, 100)}...`
+                            : description;
+                        })()}
+                      </Typography>
+
+                      <Typography variant='h6' color='primary' sx={{ mb: 2 }}>
+                        ${product.price || '0.00'}
+                      </Typography>
+
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                          variant='outlined'
+                          size='small'
+                          startIcon={<Visibility />}
+                          onClick={() => navigate(`/products/${product.id}`)}
+                          sx={{ flex: 1 }}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          variant='contained'
+                          size='small'
+                          startIcon={<ShoppingCart />}
+                          onClick={() => addToCart(product)}
+                          sx={{ flex: 1 }}
+                        >
+                          Add to Cart
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })
+          ) : (
+            <Grid size={{ xs: 12 }}>
+              <Typography variant='h6' align='center' sx={{ mt: 4 }}>
+                {loading ? 'Loading products...' : 'No products found'}
+              </Typography>
+            </Grid>
+          )}
+        </Stack>
+        )} 
 
         {totalPages > 1 && (
           <Stack spacing={2} alignItems='center' sx={{ mt: 4 }}>
